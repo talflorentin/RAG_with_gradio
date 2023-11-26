@@ -7,24 +7,19 @@ from typing import Any, Dict, Generator, List
 from huggingface_hub import InferenceClient
 from transformers import AutoTokenizer
 
-hf_model = "mistralai/Mistral-7B-Instruct-v0.1"
-hf_model = "meta-llama/Llama-2-7b-chat-hf"
-hf_model = "HuggingFaceH4/zephyr-7b-beta"
-tokenizer = AutoTokenizer.from_pretrained(hf_model)
+HF_MODEL = "HuggingFaceH4/zephyr-7b-beta"
+
+OPENAI_KEY = getenv("OPENAI_API_KEY")
+HF_TOKEN = getenv("HUGGING_FACE_HUB_TOKEN")
+
+tokenizer = AutoTokenizer.from_pretrained(HF_MODEL, token=HF_TOKEN)
 
 temperature = 0.9
 top_p = 0.6
 repetition_penalty = 1.2
 
-# OPENAI_KEY = getenv("OPENAI_API_KEY")
-# HF_TOKEN = getenv("HUGGING_FACE_HUB_TOKEN")
-OPENAI_KEY = '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'
-HF_TOKEN = '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'
-openai.api_key = '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'
-
-
 hf_client = InferenceClient(
-        hf_model,
+        HF_MODEL,
         token=HF_TOKEN
         )
 

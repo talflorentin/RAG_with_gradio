@@ -5,16 +5,18 @@ import pandas as pd
 from pathlib import Path
 import tqdm
 import numpy as np
-
 from sentence_transformers import SentenceTransformer
+# from gradio_app.constants import (DB_TABLE_NAME, VECTOR_COLUMN_NAME, TEXT_COLUMN_NAME, FILES_DUMP_FOLDER)
 
-
-EMB_MODEL_NAME = "paraphrase-albert-small-v2"
+EMB_MODEL_NAME = "paraphrase-albert-small-v2"  # lightweight
 DB_TABLE_NAME = "split_files_db"
 VECTOR_COLUMN_NAME = "vctr"
 TEXT_COLUMN_NAME = "txt"
-INPUT_DIR = r"C:\Users\Tal\PycharmProjects\rag-gradio-sample-project\prep_scripts\split_files_dump"
-db = lancedb.connect(".lancedb")  # db location
+FILES_DUMP_FOLDER = "split_files_dump"
+
+
+INPUT_DIR = FILES_DUMP_FOLDER
+db = lancedb.connect("gradio_app/.lancedb")
 batch_size = 32
 
 model = SentenceTransformer(EMB_MODEL_NAME)
@@ -54,7 +56,6 @@ for i in tqdm.tqdm(range(0, int(np.ceil(len(sentences) / batch_size)))):
         })
 
         tbl.add(df)
-        print(f"batch {i} succeeded")
     except:
         print(f"batch {i} was skipped")
 

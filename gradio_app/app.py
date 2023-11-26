@@ -1,7 +1,3 @@
-"""
-Credit to Derek Thomas, derek@huggingface.co
-"""
-
 import subprocess
 
 subprocess.run(["pip", "install", "--upgrade", "transformers[torch,sentencepiece]==4.34.1"])
@@ -16,8 +12,7 @@ from jinja2 import Environment, FileSystemLoader
 from backend.query_llm import generate_hf, generate_openai
 from backend.semantic_search import table, retriever
 
-VECTOR_COLUMN_NAME = "vctr"
-TEXT_COLUMN_NAME = "txt"
+from constants import (VECTOR_COLUMN_NAME, TEXT_COLUMN_NAME)
 
 proj_dir = Path(__file__).parent
 # Setting up the logging
@@ -32,9 +27,8 @@ template = env.get_template('template.j2')
 template_html = env.get_template('template_html.j2')
 
 # Examples
-examples = ['What is the capital of China?',
-            'Why is the sky blue?',
-            'Who won the mens world cup in 2014?', ]
+examples = ['What is MusicGen? Explain its architecture',
+            'How to use the trainer module?',]
 
 
 def add_text(history, text):

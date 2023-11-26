@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 from sentence_transformers import SentenceTransformer
 
-EMB_MODEL_NAME = "paraphrase-albert-small-v2"
+EMB_MODEL_NAME = "paraphrase-albert-small-v2"  # Winner of MTEB
 DB_TABLE_NAME = "split_files_db"
 
 # Setting up the logging
