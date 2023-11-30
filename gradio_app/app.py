@@ -1,10 +1,11 @@
-"""
-Credit to Derek Thomas, derek@huggingface.co
-"""
-
 import subprocess
 
 subprocess.run(["pip", "install", "--upgrade", "transformers[torch,sentencepiece]==4.34.1"])
+
+from sentence_transformers import SentenceTransformer
+import cohere
+from os import getenv
+import numpy as np
 
 import logging
 from pathlib import Path
@@ -14,10 +15,24 @@ import gradio as gr
 from jinja2 import Environment, FileSystemLoader
 
 from backend.query_llm import generate_hf, generate_openai
-from backend.semantic_search import table, retriever
+from backend.semantic_search import table
 
-VECTOR_COLUMN_NAME = "vctr"
-TEXT_COLUMN_NAME = "txt"
+from constants import (VECTOR_COLUMN_NAME, TEXT_COLUMN_NAME)
+
+
+cohere_embedding_dimensions = {
+    "embed-english-v3.0": 1024,
+    "embed-multilingual-v3.0": 1024,
+    "embed-english-light-v3.0": 384,
+    "embed-multilingual-light-v3.0": 384,
+    "embed-english-v2.0": 4096,
+    "embed-english-light-v2.0": 1024,
+    "embed-multilingual-v2.0": 768,
+}
+EMB_MODEL_NAME = "embed-english-v3.0"
+EMB_MODEL_NAME = "all-MiniLM-L6-v2"
+EMB_MODEL_NAME = "all-mpnet-base-v2"
+
 
 proj_dir = Path(__file__).parent
 # Setting up the logging
@@ -32,9 +47,8 @@ template = env.get_template('template.j2')
 template_html = env.get_template('template_html.j2')
 
 # Examples
-examples = ['What is the capital of China?',
-            'Why is the sky blue?',
-            'Who won the mens world cup in 2014?', ]
+examples = ['What is MusicGen? Explain its architecture',
+            'How to use the trainer module?',]
 
 
 def add_text(history, text):
@@ -55,7 +69,16 @@ def bot(history, api_kind):
     # Retrieve documents relevant to query
     document_start = perf_counter()
 
-    query_vec = retriever.encode(query)
+    if EMB_MODEL_NAME in ["paraphrase-albert-small-v2", "all-MiniLM-L6-v2", "all-mpnet-base-v2"]:
+        retriever = SentenceTransformer(EMB_MODEL_NAME)
+        query_vec = retriever.encode(query)
+
+    elif EMB_MODEL_NAME in list(cohere_embedding_dimensions.keys()):
+        co = cohere.Client(getenv('COHERE_API_KEY'))
+        query_vec = np.array(co.embed([query], input_type="search_document", model=EMB_MODEL_NAME).embeddings[0])
+    else:
+        query_vec = None
+
     documents = table.search(query_vec, vector_column_name=VECTOR_COLUMN_NAME).limit(top_k_rank).to_list()
     documents = [doc[TEXT_COLUMN_NAME] for doc in documents]
 

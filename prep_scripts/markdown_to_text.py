@@ -4,12 +4,7 @@ import os
 import re
 from pathlib import Path
 
-
-DIR_TO_SCRAPE = "../../transformers/docs/source/en/"
-
-current_directory = os.getcwd()
-print("Current working directory:", current_directory)
-
+DIR_TO_SCRAPE = "../transformers/docs/source/en/"
 OUTPUT_DIR = str(Path().resolve() / "docs_dump")
 
 
@@ -50,5 +45,3 @@ for file in files:
 
         with open(os.path.join(OUTPUT_DIR, f"{parent}_{file.stem}.txt"), "w") as f:
             f.write(text)
-
-print('Finished')
