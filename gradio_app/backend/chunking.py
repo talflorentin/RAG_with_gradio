@@ -1,8 +1,7 @@
 import os
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from constants import (FILES_DUMP_FOLDER)
 
-
+FILES_DUMP_FOLDER = 'split_files_dump'
 directory_path = 'docs_dump'  # Use a relative path
 directory_full_path = os.path.join(os.getcwd(), directory_path)  # Create an absolute path
 
