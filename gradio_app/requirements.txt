@@ -12,3 +12,5 @@ Markdown==3.5.1
 beautifulsoup4==4.12.2
 langchain==0.0.340
 cohere==4.36
+tiktoken==0.1.1
+sentence-transformers==2.2.2

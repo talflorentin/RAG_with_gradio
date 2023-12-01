@@ -18,6 +18,7 @@ from backend.query_llm import generate_hf, generate_openai
 from backend.semantic_search import table
 
 from constants import (VECTOR_COLUMN_NAME, TEXT_COLUMN_NAME)
+from sentence_transformers import CrossEncoder
 
 
 cohere_embedding_dimensions = {
@@ -31,7 +32,7 @@ cohere_embedding_dimensions = {
 }
 EMB_MODEL_NAME = "embed-english-v3.0"
 EMB_MODEL_NAME = "all-MiniLM-L6-v2"
-EMB_MODEL_NAME = "all-mpnet-base-v2"
+# EMB_MODEL_NAME = "all-mpnet-base-v2"
 
 
 proj_dir = Path(__file__).parent
@@ -48,7 +49,8 @@ template_html = env.get_template('template_html.j2')
 
 # Examples
 examples = ['What is MusicGen? Explain its architecture',
-            'How to use the trainer module?',]
+            'How to use the trainer module?',
+            'What is wav2vec']
 
 
 def add_text(history, text):
@@ -58,7 +60,7 @@ def add_text(history, text):
 
 
 def bot(history, api_kind):
-    top_k_rank = 4
+    top_k_rank = 10
     query = history[-1][0]
 
     if not query:
@@ -81,6 +83,16 @@ def bot(history, api_kind):
 
     documents = table.search(query_vec, vector_column_name=VECTOR_COLUMN_NAME).limit(top_k_rank).to_list()
     documents = [doc[TEXT_COLUMN_NAME] for doc in documents]
+
+    if top_k_rank > 4:
+        all_docs = documents
+        model = CrossEncoder('cross-encoder/ms-marco-TinyBERT-L-2-v2', max_length=512)
+        zipped_list = [(query, paragraph) for paragraph in all_docs]
+        scores = model.predict(zipped_list)
+
+        top_indices = np.argsort(scores)[:4]
+        documents = np.array(all_docs)[top_indices].tolist()
+
 
     document_time = perf_counter() - document_start
     logger.warning(f'Finished Retrieving documents in {round(document_time, 2)} seconds...')

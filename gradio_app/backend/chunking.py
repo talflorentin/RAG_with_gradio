@@ -1,16 +1,20 @@
 import os
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter, CharacterTextSplitter
 
 FILES_DUMP_FOLDER = 'split_files_dump'
-directory_path = 'docs_dump'  # Use a relative path
-directory_full_path = os.path.join(os.getcwd(), directory_path)  # Create an absolute path
+directory_path = 'docs_dump'
+directory_full_path = os.path.join(os.getcwd(), directory_path)
 
 text_splitter = RecursiveCharacterTextSplitter(
-    chunk_size=1000,
-    chunk_overlap=100,
+    chunk_size=2000,
+    chunk_overlap=200,
     length_function=len,
     add_start_index=True,
 )
+
+# text_splitter = CharacterTextSplitter.from_tiktoken_encoder(
+#     chunk_size=200, chunk_overlap=20, disallowed_special=()
+# )
 
 files_splits = {}
 
@@ -28,8 +32,8 @@ for filename in os.listdir(directory_full_path):
             files_splits[filename[:-4]] = texts
 
 
-output_path = FILES_DUMP_FOLDER  # Use a relative path
-output_full_path = os.path.join(os.getcwd(), output_path)  # Create an absolute path
+output_path = FILES_DUMP_FOLDER
+output_full_path = os.path.join(os.getcwd(), output_path)
 os.makedirs(output_full_path, exist_ok=True)
 
 for key, string_list in files_splits.items():

@@ -23,8 +23,8 @@ cohere_embedding_dimensions = {
 EMB_MODEL_NAME = "paraphrase-albert-small-v2"
 EMB_MODEL_NAME = "thenlper/gte-large"
 EMB_MODEL_NAME = "all-MiniLM-L6-v2"
-EMB_MODEL_NAME = "embed-english-v3.0"
-EMB_MODEL_NAME = "all-mpnet-base-v2"
+# EMB_MODEL_NAME = "embed-english-v3.0"
+# EMB_MODEL_NAME = "all-mpnet-base-v2"
 
 if EMB_MODEL_NAME in ["paraphrase-albert-small-v2", "all-MiniLM-L6-v2", "all-mpnet-base-v2"]:
     mode = 'ST'

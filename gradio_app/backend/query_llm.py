@@ -8,6 +8,8 @@ from huggingface_hub import InferenceClient
 from transformers import AutoTokenizer
 
 HF_MODEL = "HuggingFaceH4/zephyr-7b-beta"
+HF_MODEL = "mistralai/Mistral-7B-Instruct-v0.1"
+
 
 OPENAI_KEY = getenv("OPENAI_API_KEY")
 HF_TOKEN = getenv("HUGGING_FACE_HUB_TOKEN")
